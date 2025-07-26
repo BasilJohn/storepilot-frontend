@@ -46,7 +46,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       });
 
       // redirect to dashboard or home
-      //window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (err: any) {
       toast({
         title: "Login failed",
