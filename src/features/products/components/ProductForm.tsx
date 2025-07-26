@@ -9,6 +9,7 @@ import {
   VStack,
   Image,
   HStack,
+  Heading,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -26,6 +27,9 @@ export default function ProductForm() {
 
   return (
     <Box p={8}>
+      <Heading size="lg" mb={6}>
+        Add New Product
+      </Heading>
       <VStack spacing={4} align="stretch">
         <FormControl>
           <FormLabel>Product Name:</FormLabel>

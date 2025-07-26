@@ -1,3 +1,4 @@
+"use client";
 // layout/AdminLayout.tsx
 import { Box, Flex } from "@chakra-ui/react";
 // Update the import path below if Sidebar is in 'src/components/Sidebar.tsx'
