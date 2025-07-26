@@ -1,5 +1,5 @@
 // features/auth/api/login.ts
-import api from "../../../lib/axios";
+import api from "../../../lib/axios/auth";
 
 export async function login({
   email,
