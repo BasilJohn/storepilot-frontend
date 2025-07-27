@@ -2,18 +2,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import productApi from "../../../lib/axios/product";
-import { Product } from "../types";
+import { createProduct } from "../api/product";
 
+// Hook to create a new product
 export const useCreateProduct = () => {
   const toast = useToast();
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: async (data: Omit<Product, "id">) => {
-      const response = await productApi.post("/product/createProduct", data);
-      return response.data;
-    },
+    mutationFn: createProduct,
     onSuccess: () => {
       toast({
         title: "Product added",

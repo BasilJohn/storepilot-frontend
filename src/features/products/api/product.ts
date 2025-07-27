@@ -10,10 +10,18 @@ export const getAllProducts = async (): Promise<Product[]> => {
 
 // Function to create a new product
 export const createProduct = async (data: Omit<Product, "id">) => {
-    const response = await productApi.post("/product/createProduct", data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+    const response = await productApi.post("/product/createProduct", data);
+    return response.data;
+};
+
+// Function to delete a product by ID
+export const deleteProduct = async (id: string) => {
+  const response = await productApi.delete(`/product/deleteProduct/${id}`);
+  return response.data;
+}
+
+// Function to update a product by ID
+export const updateProduct = async (id: string, data: Partial<Product>) => {
+  const response = await productApi.put(`/product/updateProduct/${id}`, data);
   return response.data;
 };
