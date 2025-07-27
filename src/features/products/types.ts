@@ -4,7 +4,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  emoji: string;
+  emoji?: string;
   unit?: string;
   description?: string;
   imageUrl?: string;

@@ -10,6 +10,10 @@ export const getAllProducts = async (): Promise<Product[]> => {
 
 // Function to create a new product
 export const createProduct = async (data: Omit<Product, "id">) => {
-  const res = await productApi.post("/product/createProduct", data);
-  return res.data;
+    const response = await productApi.post("/product/createProduct", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 };
