@@ -15,6 +15,7 @@ import {
 import { Product } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useDeleteProduct } from "../hooks/useDeleteProduct";
+import { useRouter } from "next/router";
 
 interface Props {
   product: Product;
@@ -27,6 +28,7 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef(null);
   const toast = useToast();
+  const router = useRouter();
 
   const { mutate: deleteProduct, isPending } = useDeleteProduct();
 
@@ -53,6 +55,11 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
     });
   };
 
+  const handleEdit = () => {
+    router.push(`/products/${product.id}`);
+    onEdit();
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -65,7 +72,7 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
       </Text>
       <Text mb={4}>${product.price.toFixed(2)}</Text>
       <Flex justify="center" gap={2}>
-        <Button size="sm" colorScheme="blue" onClick={onEdit}>
+        <Button size="sm" colorScheme="blue" onClick={handleEdit}>
           Edit
         </Button>
         <Button

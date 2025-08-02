@@ -15,15 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import ProductCard from "../components/ProductCard";
-import { Product } from "../types";
 import { useRouter } from "next/router";
 import { useProducts } from "../hooks/useProducts";
 
-const mockProducts: Product[] = [
-  { id: "1", name: "Green Mango (1 lb)", price: 3.99, emoji: "🥭" },
-  { id: "2", name: "Tomato (1 lb)", price: 0.99, emoji: "🍅" },
-  { id: "3", name: "Indian Carrots (1 lb)", price: 3.99, emoji: "🥕" },
-];
 
 export default function ProductsPage() {
   const router = useRouter();

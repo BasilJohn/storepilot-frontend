@@ -25,3 +25,9 @@ export const updateProduct = async (id: string, data: Partial<Product>) => {
   const response = await productApi.put(`/product/updateProduct/${id}`, data);
   return response.data;
 };
+
+// Function to fetch a product by ID`
+export const fetchProductById = async (id: string): Promise<Product> => {
+  const res = await productApi.get(`/product/getProductById/${id}`);
+  return res.data as Product;
+};

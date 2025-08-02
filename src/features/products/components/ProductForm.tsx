@@ -12,9 +12,16 @@ import {
   Image,
   HStack,
   Heading,
+  Spinner,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { useCreateProduct } from "../hooks/useCreateProduct";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import {
+  useCreateProduct,
+  useUpdateProduct,
+  useGetProductById,
+} from "../hooks/";
+import { Product } from "../types";
 
 export default function ProductForm() {
   const [name, setName] = useState("");
@@ -24,8 +31,28 @@ export default function ProductForm() {
   const [status, setStatus] = useState<"in_stock" | "out_of_stock">("in_stock");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const router = useRouter();
+
+  const { id } = router.query;
 
   const { mutate: createProduct, isPending } = useCreateProduct();
+
+  const { data: product, isLoading, isError } = useGetProductById();
+  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+
+  useEffect(() => {
+    if (product) {
+      setName(product.name || "");
+      setPrice(product.price?.toString() || "");
+      setUnit(product.unit || "1 lb");
+      setDescription(product.description || "");
+      setStatus(product.status === "out_of_stock" ? "out_of_stock" : "in_stock");
+      // If product has an image URL, use it for preview
+      if (product.imageUrl) {
+        setPreview(product.imageUrl);
+      }
+    }
+  }, [product]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,14 +80,21 @@ export default function ProductForm() {
       status,
       imageUrl: "https://cdn.example.com/carrot.png", // hardcoded for now
     };
-
-    createProduct(productData);
+    if (id && typeof id === "string") {
+      // If id exists, update the product
+      updateProduct({ id, data: productData });
+    } else {
+      createProduct(productData);
+    }
   };
+
+  if (isLoading || isUpdating) return <Spinner />;
+  if (isError) return <p>Error loading product</p>;
 
   return (
     <Box p={8}>
       <Heading size="lg" mb={6}>
-        Add New Product
+        {id ? "Edit Product" : "Add New Product"}
       </Heading>
       <form onSubmit={handleSubmit}>
         <VStack spacing={4} align="stretch">
@@ -125,7 +159,7 @@ export default function ProductForm() {
           </FormControl>
 
           <Button type="submit" colorScheme="blue" mt={4} isLoading={isPending}>
-            Save Product
+            {id ? "Update Product" : "Save Product"}
           </Button>
         </VStack>
       </form>
