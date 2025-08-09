@@ -4,8 +4,8 @@ import { Product } from "../types";
 
 // Function to fetch all products
 export const getAllProducts = async (): Promise<Product[]> => {
-  const res = await productApi.get("/product/getAllProducts");
-  return res.data as Product[];
+  const res = await productApi.get<Product[]>("/product/getAllProducts");
+  return res.data;
 };
 
 // Function to create a new product

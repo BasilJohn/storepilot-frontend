@@ -14,7 +14,7 @@ const menuItems = [
   { label: "Dashboard", icon: FiHome, path: "/dashboard" },
   { label: "Products", icon: FiBox, path: "/products" },
   { label: "Orders", icon: FiFileText, path: "/orders" },
-  { label: "Flyers", icon: FiGrid, path: "/flyers" },
+  { label: "Flyers", icon: FiGrid, path: "/flyer" },
 ];
 
 export default function Sidebar() {
