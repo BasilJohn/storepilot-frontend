@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import {
   FiBarChart2,
   FiBox,
@@ -18,6 +19,9 @@ import {
 } from "react-icons/fi";
 
 export default function DashboardPage() {
+
+    const router = useRouter();
+  
   return (
     <Box p={8}>
       <Heading size="lg" mb={6}>
@@ -40,11 +44,12 @@ export default function DashboardPage() {
           colorScheme="blue"
           size="md"
           width="fit-content"
+          onClick={() => router.push("/flyer")}
         >
           Upload New Flyer
         </Button>
-        <ActionButton icon={FiShoppingBag} label="Manage Products" />
-        <ActionButton icon={FiBarChart2} label="View Orders" />
+        <ActionButton onClick={() => router.push("/products")} icon={FiShoppingBag} label="Manage Products" />
+        <ActionButton onClick={() => router.push("/orders")} icon={FiBarChart2} label="View Orders" />
         <ActionButton icon={FiSmartphone} label="Send Push Notifications" />
       </Stack>
     </Box>
@@ -80,12 +85,13 @@ function StatCard({
   );
 }
 
-function ActionButton({ icon, label }: { icon: any; label: string }) {
+function ActionButton({ icon, label, onClick }: { icon: any; label: string, onClick?:any }) {
   return (
     <Button
       variant="outline"
       leftIcon={<Icon as={icon} />}
       size="md"
+      onClick={onClick}
       justifyContent="start"
     >
       {label}
