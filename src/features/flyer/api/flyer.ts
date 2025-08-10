@@ -1,16 +1,22 @@
-import flyerApi from "../../../lib/axios/product";
-import { UploadFlyerResponse, FlyerStatus } from "../types";
+import flyerApi from "../../../lib/axios/flyer";
+import { FlyerStatus, Flyer } from "../types";
 
-export async function getFlyerStatus(): Promise<FlyerStatus> {
-  const { data } = await flyerApi.get<FlyerStatus>("/flyers/status");
-  return data;
-}
+export const getAllFlyers = async (): Promise<Flyer[]> => {
+  const res = await flyerApi.get<Flyer[]>("/flyer/getAllFlyers");
+  return res.data;
+};
 
-export async function uploadFlyer(file: File): Promise<UploadFlyerResponse> {
-  const form = new FormData();
-  form.append("file", file);
-  const { data } = await flyerApi.post<UploadFlyerResponse>("/flyers", form, {
-    headers: { "Content-Type": "multipart/form-data" }
-  });
+export const getFlyerStatus = async (): Promise<FlyerStatus> => {
+  const { data } = await flyerApi.get<FlyerStatus>("/flyer/status");
   return data;
-}
+};
+
+export const createFlyer = async (data: Omit<Flyer, "id">) => {
+  const response = await flyerApi.post("/flyer/createFlyer", data);
+  return response.data;
+};
+
+export const updateFlyer = async (id: string, data: Partial<Flyer>) => {
+  const response = await flyerApi.put(`/flyer/updateFlyer/${id}`, data);
+  return response.data;
+};

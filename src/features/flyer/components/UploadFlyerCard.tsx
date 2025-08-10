@@ -16,9 +16,14 @@ import {
   AlertIcon,
   useToast,
   Heading,
+  Select,
+  Switch,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
-import { useFlyerStatus, useUploadFlyer } from "../hooks/useUploadFlyer";
+import { useFlyers, useSaveFlyer } from "../hooks/useUploadFlyer";
+import { FlyerStatus } from "../types";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const ACCEPTED = ["application/pdf", "image/png", "image/jpeg", "image/webp"];
@@ -30,8 +35,17 @@ export default function UploadFlyerCard() {
   const [preview, setPreview] = React.useState<string | null>(null);
   const [drag, setDrag] = React.useState(false);
 
-  const { data: status } = useFlyerStatus();
-  const { mutate: doUpload, isPending, error } = useUploadFlyer();
+  const [fileUrl, setFileUrl] = React.useState("");
+
+  const [status, setStatus] = React.useState<
+    "draft" | "published" | "archived"
+  >("published");
+  const [isActiveState, setIsActiveState] = React.useState(true);
+
+  const { data: flyers, isLoading: isLoadingFlyers } = useFlyers();
+
+  const flyer = flyers?.filter((f) => f.isActive === true)[0] || null;
+  const { mutate: saveFlyer, isPending, error } = useSaveFlyer(flyer?.id);
 
   React.useEffect(
     () => () => preview && URL.revokeObjectURL(preview),
@@ -58,114 +72,137 @@ export default function UploadFlyerCard() {
       <Heading size="lg" mb={6}>
         Upload Flyer
       </Heading>
-     <Card>
-      <CardBody>
-        <Stack align="center" spacing={4} maxW="xl" mx="auto">
-          <Input
-            ref={fileInput}
-            type="file"
-            display="none"
-            accept={ACCEPTED.join(",")}
-            onChange={(e) => setPicked(e.target.files?.[0] ?? undefined)}
-          />
+      <Card>
+        <CardBody>
+          <Stack align="center" spacing={4} maxW="xl" mx="auto">
+            <Input
+              ref={fileInput}
+              type="file"
+              display="none"
+              accept={ACCEPTED.join(",")}
+              onChange={(e) => setPicked(e.target.files?.[0] ?? undefined)}
+            />
 
-          <Button variant="outline" onClick={() => fileInput.current?.click()}>
-            Choose File
-          </Button>
+            <Button
+              variant="outline"
+              onClick={() => fileInput.current?.click()}
+            >
+              Choose File
+            </Button>
 
-          <Box
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDrag(true);
-            }}
-            onDragLeave={() => setDrag(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDrag(false);
-              setPicked(e.dataTransfer.files?.[0]);
-            }}
-            borderWidth="1px"
-            borderStyle={drag ? "dashed" : "solid"}
-            borderColor={drag ? "purple.400" : "gray.200"}
-            rounded="xl"
-            p={4}
-          >
-            {file ? (
-              preview ? (
+            <Box
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDrag(true);
+              }}
+              onDragLeave={() => setDrag(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDrag(false);
+                setPicked(e.dataTransfer.files?.[0]);
+              }}
+              borderWidth="1px"
+              borderStyle={drag ? "dashed" : "solid"}
+              borderColor={drag ? "purple.400" : "gray.200"}
+              rounded="xl"
+              p={4}
+            >
+              {file ? (
+                preview ? (
+                  <Image
+                    src={preview}
+                    alt={file.name}
+                    boxSize="160px"
+                    objectFit="cover"
+                    rounded="lg"
+                  />
+                ) : (
+                  <Center bg="yellow.50" rounded="lg" boxSize="160px">
+                    <Text fontWeight="semibold">PDF</Text>
+                  </Center>
+                )
+              ) : flyer?.fileUrl ? (
                 <Image
-                  src={preview}
-                  alt={file.name}
+                  src={flyer?.fileUrl}
+                  alt="Current flyer"
                   boxSize="160px"
                   objectFit="cover"
                   rounded="lg"
                 />
               ) : (
-                <Center bg="yellow.50" rounded="lg" boxSize="160px">
-                  <Text fontWeight="semibold">PDF</Text>
+                <Center bg="orange.50" rounded="lg" boxSize="160px">
+                  <Box w="48px" h="48px" bg="orange.300" rounded="md" />
                 </Center>
-              )
-            ) : status?.url ? (
-              <Image
-                src={status.url}
-                alt="Current flyer"
-                boxSize="160px"
-                objectFit="cover"
-                rounded="lg"
-              />
-            ) : (
-              <Center bg="orange.50" rounded="lg" boxSize="160px">
-                <Box w="48px" h="48px" bg="orange.300" rounded="md" />
-              </Center>
-            )}
-          </Box>
+              )}
+            </Box>
 
-          <HStack>
-            <Badge
-              colorScheme={status?.active ?? true ? "green" : "gray"}
-              rounded="full"
-              px={3}
-              py={1}
+            <HStack>
+              <Badge
+                colorScheme={flyer?.isActive ?? true ? "green" : "gray"}
+                rounded="full"
+                px={3}
+                py={1}
+              >
+                <HStack spacing={1}>
+                  <CheckIcon />
+                  <Text fontWeight="medium">
+                    Status:{" "}
+                    {flyer?.isActive ?? true ? "Flyer Active" : "Inactive"}
+                  </Text>
+                </HStack>
+              </Badge>
+            </HStack>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+              maxW="xl"
             >
-              <HStack spacing={1}>
-                <CheckIcon />
-                <Text fontWeight="medium">
-                  Status: {status?.active ?? true ? "Flyer Active" : "Inactive"}
-                </Text>
-              </HStack>
-            </Badge>
-          </HStack>
+              <FormControl maxW="xs">
+                <FormLabel>Flyer Status</FormLabel>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as FlyerStatus)}
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
+                </Select>
+              </FormControl>
 
-          <Button
-            colorScheme="purple"
-            w="56"
-            isDisabled={!file}
-            isLoading={isPending}
-            onClick={() =>
-              file &&
-              doUpload(file, {
-                onSuccess: () => {
-                  toast({
-                    status: "success",
-                    title: "Flyer updated successfully",
-                  });
-                  setFile(null);
-                  setPreview(null);
-                  if (fileInput.current) fileInput.current.value = "";
-                },
-              })
-            }
-          >
-            Update Flyer
-          </Button>
+              <FormControl display="flex" alignItems="center">
+                <FormLabel mb="0">Active</FormLabel>
+                <Switch
+                  isChecked={isActiveState}
+                  onChange={(e) => setIsActiveState(e.target.checked)}
+                />
+              </FormControl>
+            </Stack>
+            <Button
+              colorScheme="purple"
+              w="56"
+              isDisabled={!file}
+              isLoading={isPending}
+              onClick={() =>
+                saveFlyer({
+                  fileUrl,
+                  status,
+                  isActive: isActiveState,
+                  fileName: "pdf",
+                })
+              }
+            >
+              Update Flyer
+            </Button>
 
-          {error && (
-            <Alert status="error" rounded="lg">
-              <AlertIcon />
-              {error.message}
-            </Alert>
-          )}
-        </Stack>
-      </CardBody>
+            {error && (
+              <Alert status="error" rounded="lg">
+                <AlertIcon />
+                {error.message}
+              </Alert>
+            )}
+          </Stack>
+        </CardBody>
       </Card>
     </Box>
   );
