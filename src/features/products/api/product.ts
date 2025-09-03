@@ -1,5 +1,5 @@
 // features/auth/api/product.ts
-import productApi from "../../../lib/axios/product";
+import productApi from "../../../lib/axios/api";
 import { Product } from "../types";
 
 // Function to fetch all products

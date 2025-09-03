@@ -1,4 +1,4 @@
-import flyerApi from "../../../lib/axios/flyer";
+import flyerApi from "../../../lib/axios/api";
 import { FlyerStatus, Flyer } from "../types";
 
 export const getAllFlyers = async (): Promise<Flyer[]> => {

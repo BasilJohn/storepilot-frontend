@@ -12,7 +12,7 @@ import {
   Link,
   Stack,
   Text,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -28,15 +28,19 @@ export default function LoginForm() {
   const toast = useToast();
   const router = useRouter();
 
-const handleSubmit = async (e: React.FormEvent) => {
+  type LoginResponse = {
+    token: string;
+    // add other properties if needed
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await login({ email, password });
+      const res = (await login({ email, password })) as LoginResponse;
 
-      console.log("Login response:", res);
       // store token or user
-      //localStorage.setItem("accessToken", res);
+      localStorage.setItem("accessToken", res?.token);
 
       toast({
         title: "Login successful",
