@@ -20,8 +20,16 @@ export interface Flyer {
   updatedAt?: Date;
 }
 
-export type CreateFlyerPayload = {
-  fileUrl: string;
-  status: "draft" | "published" | "archived";
-  isActive: boolean;
+
+export interface SaveFlyerInput {
+  file: File;
+  title: string;
+  weekLabel?: string;
+  startsAt?: string | Date;
+  endsAt?: string | Date;
+  visibility?: "private" | "public";
 };
+
+export type SaveOrUpdateInput =
+  | (SaveFlyerInput & { flyerId?: undefined })   // create
+  | (SaveFlyerInput & { flyerId: string });      // update

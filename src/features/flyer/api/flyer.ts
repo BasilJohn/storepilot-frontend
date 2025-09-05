@@ -11,12 +11,47 @@ export const getFlyerStatus = async (): Promise<FlyerStatus> => {
   return data;
 };
 
-export const createFlyer = async (data: Omit<Flyer, "id">) => {
-  const response = await flyerApi.post("/flyer/createFlyer", data);
-  return response.data;
-};
+export async function createMediaUpload(params: {
+  contentType: string;
+  ext?: string;
+  visibility?: "private" | "public";
+  folder?: string;
+  originalFileName?: string;
+}) {
+  const { data } = await flyerApi.post("/media/createMediaUpload", params);
+  return data as { uploadUrl: string; media: { id: string } };
+}
 
-export const updateFlyer = async (id: string, data: Partial<Flyer>) => {
-  const response = await flyerApi.put(`/flyer/updateFlyer/${id}`, data);
-  return response.data;
-};
+export async function markMediaUploaded(id: string, size?: number) {
+  const { data } = await flyerApi.post(`/media/markMediaUploaded/${id}`, { size });
+  return data;
+}
+
+
+export async function createFlyer(body: {
+  title: string;
+  mediaId: string;
+  weekLabel?: string;
+  startsAt?: string | Date;
+  endsAt?: string | Date;
+  status?: "pending" | "published" | "archived";
+}) {
+  const { data } = await flyerApi.post("/flyer/createFlyer", body);
+  return data;
+}
+
+export async function updateFlyer(
+  flyerId: string,
+  body: Partial<{
+    title: string;
+    mediaId: string;
+    weekLabel?: string;
+    startsAt?: string | Date;
+    endsAt?: string | Date;
+    status?: "pending" | "published" | "archived";
+  }>
+) {
+  const { data } = await flyerApi.put(`/flyer/updateFlyer/${flyerId}`, body);
+  return data;
+}
+

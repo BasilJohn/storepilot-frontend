@@ -45,7 +45,7 @@ export default function UploadFlyerCard() {
   const { data: flyers, isLoading: isLoadingFlyers } = useFlyers();
 
   const flyer = flyers?.filter((f) => f.isActive === true)[0] || null;
-  const { mutate: saveFlyer, isPending, error } = useSaveFlyer(flyer?.id);
+  const { mutate: saveFlyer, isPending, error } = useSaveFlyer();
 
   React.useEffect(
     () => () => preview && URL.revokeObjectURL(preview),
@@ -185,10 +185,12 @@ export default function UploadFlyerCard() {
               isLoading={isPending}
               onClick={() =>
                 saveFlyer({
-                  fileUrl,
-                  status,
-                  isActive: isActiveState,
-                  fileName: "pdf",
+                  file,
+                  title: "Weekly Flyer",
+                  weekLabel: "Week 1",
+                  startsAt: new Date(),
+                  endsAt: new Date(),
+                  visibility: "private",
                 })
               }
             >
