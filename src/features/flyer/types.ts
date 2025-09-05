@@ -33,3 +33,22 @@ export interface SaveFlyerInput {
 export type SaveOrUpdateInput =
   | (SaveFlyerInput & { flyerId?: undefined })   // create
   | (SaveFlyerInput & { flyerId: string });      // update
+
+
+export type FlyerWithUrl = {
+  id: string;
+  title: string;
+  weekLabel?: string | null;
+  status: "draft" | "published" | "archived";
+  startsAt?: string | null;   // ISO string
+  endsAt?: string | null;     // ISO string
+  createdAt: string;
+  updatedAt: string;
+
+  media: {
+    id: string;
+    mimeType: string;
+    size?: number | null;
+    url: string;              // ✅ always present, signed URL or public URL
+  } | null;
+};  

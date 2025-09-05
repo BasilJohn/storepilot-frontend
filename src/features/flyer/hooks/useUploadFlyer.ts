@@ -5,9 +5,10 @@ import {
   getAllFlyers,
   createFlyer,
   createMediaUpload,
-  markMediaUploaded
+  markMediaUploaded,
+  getFlyerWithUrl
 } from "../api/flyer";
-import type { Flyer, FlyerStatus,SaveOrUpdateInput } from "../types";
+import type { Flyer, FlyerStatus,FlyerWithUrl,SaveOrUpdateInput } from "../types";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
@@ -107,3 +108,10 @@ export function useSaveFlyer() {
     },
   });
 }
+
+export const useGetActiveFlyerData = () => {
+  return useQuery<FlyerWithUrl>({
+    queryKey: FLYER_KEYS.flyers,
+    queryFn: getFlyerWithUrl,
+  });
+};

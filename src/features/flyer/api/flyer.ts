@@ -27,7 +27,6 @@ export async function markMediaUploaded(id: string, size?: number) {
   return data;
 }
 
-
 export async function createFlyer(body: {
   title: string;
   mediaId: string;
@@ -55,3 +54,7 @@ export async function updateFlyer(
   return data;
 }
 
+export const getFlyerWithUrl = async (): Promise<any> => {
+  const { data } = await flyerApi.get<any>("/flyer/getFlyerWithUrl");
+  return data;
+};
