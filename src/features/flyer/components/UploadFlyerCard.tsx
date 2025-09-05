@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Box,
@@ -22,7 +22,7 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
-import { useFlyers, useSaveFlyer } from "../hooks/useUploadFlyer";
+import { useGetActiveFlyerData, useSaveFlyer } from "../hooks/useUploadFlyer";
 import { FlyerStatus } from "../types";
 
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -35,19 +35,16 @@ export default function UploadFlyerCard() {
   const [preview, setPreview] = React.useState<string | null>(null);
   const [drag, setDrag] = React.useState(false);
 
-  const [fileUrl, setFileUrl] = React.useState("");
-
   const [status, setStatus] = React.useState<
     "draft" | "published" | "archived"
   >("published");
   const [isActiveState, setIsActiveState] = React.useState(true);
 
-  const { data: flyers, isLoading: isLoadingFlyers } = useFlyers();
+  const { data: flyer, isLoading: isLoadingFlyers } = useGetActiveFlyerData();
 
-  const flyer = flyers?.filter((f) => f.isActive === true)[0] || null;
   const { mutate: saveFlyer, isPending, error } = useSaveFlyer();
 
-  React.useEffect(
+useEffect(
     () => () => preview && URL.revokeObjectURL(preview),
     [preview]
   );
@@ -67,6 +64,12 @@ export default function UploadFlyerCard() {
     setPreview(f.type.startsWith("image/") ? URL.createObjectURL(f) : null);
   }
 
+  useEffect(()=>{
+    if(flyer?.status){
+      setStatus(flyer?.status);
+    }
+  },[flyer])
+  
   return (
     <Box p={8}>
       <Heading size="lg" mb={6}>
@@ -121,9 +124,9 @@ export default function UploadFlyerCard() {
                     <Text fontWeight="semibold">PDF</Text>
                   </Center>
                 )
-              ) : flyer?.fileUrl ? (
+              ) : flyer?.media?.url ? (
                 <Image
-                  src={flyer?.fileUrl}
+                  src={flyer?.media?.url}
                   alt="Current flyer"
                   boxSize="160px"
                   objectFit="cover"
@@ -138,7 +141,7 @@ export default function UploadFlyerCard() {
 
             <HStack>
               <Badge
-                colorScheme={flyer?.isActive ?? true ? "green" : "gray"}
+                //colorScheme={flyer?.isActive ?? true ? "green" : "gray"}
                 rounded="full"
                 px={3}
                 py={1}
@@ -147,7 +150,7 @@ export default function UploadFlyerCard() {
                   <CheckIcon />
                   <Text fontWeight="medium">
                     Status:{" "}
-                    {flyer?.isActive ?? true ? "Flyer Active" : "Inactive"}
+                    {/* {flyer?.isActive ?? true ? "Flyer Active" : "Inactive"} */}
                   </Text>
                 </HStack>
               </Badge>
