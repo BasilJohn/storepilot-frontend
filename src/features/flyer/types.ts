@@ -44,6 +44,7 @@ export type FlyerWithUrl = {
   endsAt?: string | null;     // ISO string
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
 
   media: {
     id: string;

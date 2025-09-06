@@ -38,16 +38,15 @@ export default function UploadFlyerCard() {
   const [status, setStatus] = React.useState<
     "draft" | "published" | "archived"
   >("published");
-  const [isActiveState, setIsActiveState] = React.useState(true);
 
   const { data: flyer, isLoading: isLoadingFlyers } = useGetActiveFlyerData();
+  const [isActiveState, setIsActiveState] = React.useState(
+    flyer?.isActive ?? true
+  );
 
   const { mutate: saveFlyer, isPending, error } = useSaveFlyer();
 
-useEffect(
-    () => () => preview && URL.revokeObjectURL(preview),
-    [preview]
-  );
+  useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
 
   function validate(f: File) {
     if (!ACCEPTED.includes(f.type))
@@ -64,12 +63,12 @@ useEffect(
     setPreview(f.type.startsWith("image/") ? URL.createObjectURL(f) : null);
   }
 
-  useEffect(()=>{
-    if(flyer?.status){
+  useEffect(() => {
+    if (flyer?.status) {
       setStatus(flyer?.status);
     }
-  },[flyer])
-  
+  }, [flyer]);
+
   return (
     <Box p={8}>
       <Heading size="lg" mb={6}>
@@ -141,7 +140,7 @@ useEffect(
 
             <HStack>
               <Badge
-                //colorScheme={flyer?.isActive ?? true ? "green" : "gray"}
+                colorScheme={flyer?.isActive ?? true ? "green" : "gray"}
                 rounded="full"
                 px={3}
                 py={1}
@@ -150,7 +149,7 @@ useEffect(
                   <CheckIcon />
                   <Text fontWeight="medium">
                     Status:{" "}
-                    {/* {flyer?.isActive ?? true ? "Flyer Active" : "Inactive"} */}
+                    {flyer?.isActive ?? true ? "Flyer Active" : "Inactive"}
                   </Text>
                 </HStack>
               </Badge>
