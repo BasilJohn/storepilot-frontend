@@ -16,12 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import {
-  useCreateProduct,
-  useUpdateProduct,
-  useGetProductById,
-} from "../hooks/";
-import { Product } from "../types";
+import { useCreateProduct, useGetProductById, useUpdateProduct, useSaveProduct } from "../hooks/useProducts"; 
+
 
 export default function ProductForm() {
   const [name, setName] = useState("");
@@ -36,9 +32,9 @@ export default function ProductForm() {
   const { id } = router.query;
 
   const { mutate: createProduct, isPending } = useCreateProduct();
-
   const { data: product, isLoading, isError } = useGetProductById();
   const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+  const { mutate: saveProduct, isPending: isSaving } = useSaveProduct();
 
   useEffect(() => {
     if (product) {
@@ -48,9 +44,9 @@ export default function ProductForm() {
       setDescription(product.description || "");
       setStatus(product.status === "out_of_stock" ? "out_of_stock" : "in_stock");
       // If product has an image URL, use it for preview
-      if (product.imageUrl) {
-        setPreview(product.imageUrl);
-      }
+      // if (product.imageUrl) {
+      //   setPreview(product.imageUrl);
+      // }
     }
   }, [product]);
 
@@ -64,28 +60,7 @@ export default function ProductForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const productData: {
-      name: string;
-      price: number;
-      description: string;
-      unit: string;
-      status: "in_stock" | "out_of_stock"; // ✅ precise type
-      imageUrl: string;
-    } = {
-      name,
-      price: parseFloat(price),
-      description,
-      unit,
-      status,
-      imageUrl: "https://cdn.example.com/carrot.png", // hardcoded for now
-    };
-    if (id && typeof id === "string") {
-      // If id exists, update the product
-      updateProduct({ id, data: productData });
-    } else {
-      createProduct(productData);
-    }
+    saveProduct({ file: image, productId: id as string, name, description, price:parseFloat(price), status, imageUrl:preview || "", unit });
   };
 
   if (isLoading || isUpdating) return <Spinner />;
