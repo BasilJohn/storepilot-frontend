@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
-import { getAllProducts, createProduct, fetchProductById, updateProduct, deleteProduct, createMediaUpload, markMediaUploaded, attachProductMedia } from "../api/product";
-import { Product, SaveOrUpdateProductInput } from "../types";
+import { getAllProducts, createProduct, fetchProductById, updateProduct, deleteProduct, createMediaUpload, markMediaUploaded, attachProductMedia,getProductMedia } from "../api/product";
+import { Product, ProductMediaWithAsset, SaveOrUpdateProductInput } from "../types";
 
 export const PRODUCT_KEYS = {
   status: ["product", "status"] as const,
@@ -113,7 +113,6 @@ export const useDeleteProduct = () => {
   });
 };
 
-
 export function useSaveProduct() {
   const toast = useToast();
   const router = useRouter();
@@ -149,7 +148,7 @@ export function useSaveProduct() {
       
       // 2) Ask backend for presigned PUT
       const ext = (file.name.match(/\.\w+$/)?.[0] || "").toLowerCase();
-      const visibility = "public"; // or set to the appropriate value required by your backend
+      const visibility = "private"; // or set to the appropriate value required by your backend
       const { uploadUrl, media } = await createMediaUpload({
         contentType: file.type,
         ext,
@@ -195,5 +194,12 @@ export function useSaveProduct() {
         "Failed to save flyer";
       toast({ title: "Error", description: msg, status: "error", duration: 3500, isClosable: true });
     },
+  });
+}
+
+export function useProductMedia(productId: string) {
+  return useQuery<ProductMediaWithAsset[]>({
+    queryKey: ["product", productId, "media"],
+    queryFn: () => getProductMedia(productId),
   });
 }

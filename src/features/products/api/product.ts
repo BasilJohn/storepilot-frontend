@@ -1,6 +1,6 @@
 // features/auth/api/product.ts
 import productApi from "../../../lib/axios/api";
-import { Product } from "../types";
+import { Product, ProductMediaWithAsset } from "../types";
 
 // Function to fetch all products
 export const getAllProducts = async (): Promise<Product[]> => {
@@ -66,6 +66,11 @@ export async function updateProductMedia(
   const { data } = await productApi.patch(`/productMedia/updateProductMedia/${productId}/media/${mediaId}`, body);
   return data;
 }
+
+export const getProductMedia = async (productId: string): Promise<ProductMediaWithAsset[]> => {
+  const { data } = await productApi.get(`/productMedia/getProductMedia/${productId}/media`);
+  return data as ProductMediaWithAsset[];
+};
 
 // Reorder gallery
 export async function reorderProductMedia(productId: string, mediaIds: string[]) {

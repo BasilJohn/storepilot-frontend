@@ -16,8 +16,12 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useCreateProduct, useGetProductById, useUpdateProduct, useSaveProduct } from "../hooks/useProducts"; 
-
+import {
+  useGetProductById,
+  useSaveProduct,
+  useProductMedia
+} from "../hooks/useProducts";
+// import ProductImagePreview from "./ProductImagePreview";
 
 export default function ProductForm() {
   const [name, setName] = useState("");
@@ -31,22 +35,28 @@ export default function ProductForm() {
 
   const { id } = router.query;
 
-  const { mutate: createProduct, isPending } = useCreateProduct();
   const { data: product, isLoading, isError } = useGetProductById();
-  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
   const { mutate: saveProduct, isPending: isSaving } = useSaveProduct();
+  const { data: media, isLoading: isLoadingMedia } = useProductMedia(id as string);
 
+  const existingImageUrl = media ? media[0]?.media?.url || null : null;
+
+   useEffect(() => {
+    if (existingImageUrl && !preview) {
+      setPreview(existingImageUrl);
+    }
+  }, [existingImageUrl]);
+
+  
   useEffect(() => {
     if (product) {
       setName(product.name || "");
       setPrice(product.price?.toString() || "");
       setUnit(product.unit || "1 lb");
       setDescription(product.description || "");
-      setStatus(product.status === "out_of_stock" ? "out_of_stock" : "in_stock");
-      // If product has an image URL, use it for preview
-      // if (product.imageUrl) {
-      //   setPreview(product.imageUrl);
-      // }
+      setStatus(
+        product.status === "out_of_stock" ? "out_of_stock" : "in_stock"
+      );
     }
   }, [product]);
 
@@ -60,10 +70,19 @@ export default function ProductForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    saveProduct({ file: image, productId: id as string, name, description, price:parseFloat(price), status, imageUrl:preview || "", unit });
+    saveProduct({
+      file: image,
+      productId: id as string,
+      name,
+      description,
+      price: parseFloat(price),
+      status,
+      imageUrl: preview || "",
+      unit,
+    });
   };
 
-  if (isLoading || isUpdating) return <Spinner />;
+  if (isLoading || isSaving) return <Spinner />;
   if (isError) return <p>Error loading product</p>;
 
   return (
@@ -119,7 +138,7 @@ export default function ProductForm() {
             <Input type="file" accept="image/*" onChange={handleImageChange} />
             {preview && <Image src={preview} boxSize="120px" mt={2} />}
           </FormControl>
-
+          {/* <ProductImagePreview imageUrl={"previewUrl"} /> */}
           <FormControl>
             <FormLabel>Status:</FormLabel>
             <Select
@@ -133,7 +152,7 @@ export default function ProductForm() {
             </Select>
           </FormControl>
 
-          <Button type="submit" colorScheme="blue" mt={4} isLoading={isPending}>
+          <Button type="submit" colorScheme="blue" mt={4} isLoading={isSaving}>
             {id ? "Update Product" : "Save Product"}
           </Button>
         </VStack>
