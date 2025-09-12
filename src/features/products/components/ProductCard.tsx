@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Product } from "../types";
 import { useEffect, useRef, useState } from "react";
-import { useDeleteProduct } from "../hooks/useDeleteProduct";
+import { useDeleteProduct } from "../hooks/useProducts";
 import { useRouter } from "next/router";
 
 interface Props {
@@ -66,7 +66,7 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
 
   return (
     <Box p={4} borderWidth={1} borderRadius="md" textAlign="center">
-      {isClient && <Text fontSize="4xl">{product.emoji}</Text>}
+      {/* {isClient && <Text fontSize="4xl">{product.emoji}</Text>} */}
       <Text fontWeight="medium" mt={2}>
         {product.name}
       </Text>
