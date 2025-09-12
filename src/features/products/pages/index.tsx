@@ -40,7 +40,7 @@ export default function ProductsPage() {
     );
   }
 
-  if (products?.length === 0 && !isLoading) {
+  if (products?.total === 0 && !isLoading) {
     return (
       <Center py={10}>
         <Heading size="md">No products found</Heading>
@@ -75,7 +75,7 @@ export default function ProductsPage() {
       </Stack>
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-        {products.map((product) => (
+        {products?.items?.map((product) => (
           <ProductCard
             key={product.id}
             product={product}

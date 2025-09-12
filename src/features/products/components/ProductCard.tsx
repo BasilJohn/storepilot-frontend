@@ -11,6 +11,7 @@ import {
   Text,
   useDisclosure,
   useToast,
+  Image,
 } from "@chakra-ui/react";
 import { Product } from "../types";
 import { useEffect, useRef, useState } from "react";
@@ -70,6 +71,15 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
       <Text fontWeight="medium" mt={2}>
         {product.name}
       </Text>
+      <Image
+        src={product.imageUrl}
+        alt={product.name}
+        boxSize="120px"
+        objectFit="cover"
+        mx="auto"
+        mb={3}
+        borderRadius="md"
+      />
       <Text mb={4}>${product.price.toFixed(2)}</Text>
       <Flex justify="center" gap={2}>
         <Button size="sm" colorScheme="blue" onClick={handleEdit}>
@@ -95,8 +105,7 @@ export default function ProductCard({ product, onEdit, onDelete }: Props) {
           <AlertDialogContent>
             <AlertDialogHeader>Delete Product</AlertDialogHeader>
             <AlertDialogBody>
-              Are you sure you want to delete{" "}
-              <strong>{product.name}</strong>?
+              Are you sure you want to delete <strong>{product.name}</strong>?
             </AlertDialogBody>
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>

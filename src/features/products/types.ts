@@ -10,6 +10,14 @@ export interface Product {
   status?: "in_stock" | "out_of_stock";
 }
 
+export interface ProductListResponse {
+  items: Product[];
+  totalCount: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
 export type SaveOrUpdateProductInput = {
   file: File;
   productId?: string; // for update

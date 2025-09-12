@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
-import { getAllProducts, createProduct, fetchProductById, updateProduct, deleteProduct, createMediaUpload, markMediaUploaded, attachProductMedia,getProductMedia } from "../api/product";
-import { Product, ProductMediaWithAsset, SaveOrUpdateProductInput } from "../types";
+import { getProductsList, createProduct, fetchProductById, updateProduct, deleteProduct, createMediaUpload, markMediaUploaded, attachProductMedia,getProductMedia } from "../api/product";
+import { Product, ProductMediaWithAsset, SaveOrUpdateProductInput, ProductListResponse } from "../types";
 
 export const PRODUCT_KEYS = {
   status: ["product", "status"] as const,
@@ -12,9 +12,9 @@ export const PRODUCT_KEYS = {
 };
 
 export const useProducts = () => {
-  return useQuery<Product[]>({
+  return useQuery<ProductListResponse>({
     queryKey: ["products"],
-    queryFn: getAllProducts,
+    queryFn: getProductsList,
   });
 };
 
@@ -132,7 +132,7 @@ export function useSaveProduct() {
           price: price,
           unit: unit,
           description: description,
-          imageUrl: imageUrl,
+          imageUrl: "",
           status: status,
         });
       } else {
@@ -141,7 +141,7 @@ export function useSaveProduct() {
           price: price,
           unit: unit,
           description: description,
-          imageUrl: imageUrl,
+          imageUrl: "",
           status: status,
         });
       }

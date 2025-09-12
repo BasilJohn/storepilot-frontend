@@ -1,6 +1,6 @@
 // features/auth/api/product.ts
 import productApi from "../../../lib/axios/api";
-import { Product, ProductMediaWithAsset } from "../types";
+import { Product, ProductListResponse, ProductMediaWithAsset } from "../types";
 
 // Function to fetch all products
 export const getAllProducts = async (): Promise<Product[]> => {
@@ -85,3 +85,10 @@ export async function detachProductMedia(productId: string, mediaId: string) {
   const { data } = await productApi.delete(`/productMedia/detachProductMedia/${productId}/media/${mediaId}`);
   return data;
 }
+
+// Function to fetch all products
+export const getProductsList = async (): Promise<ProductListResponse> => {
+  const res = await productApi.get<ProductListResponse>("/productMedia/getProductsList");
+  return res.data;
+};
+
